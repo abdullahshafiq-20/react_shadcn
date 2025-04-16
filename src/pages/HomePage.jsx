@@ -43,12 +43,12 @@ export default function HomePage() {
             Visualize your skills, discover personalized learning paths, and connect with opportunities that match your ambitions.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="gap-2" onClick={() => navigate("/signup")}>
-              Get Started <ArrowRight className="h-5 w-5" />
+            <Button size="lg" className="gap-2" onClick={() => navigate("/dashboard")}>
+              Demo Dashboard <ArrowRight className="h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate("/career-paths")}>
+            {/* <Button size="lg" variant="outline" onClick={() => navigate("/career-paths")}>
               Explore Career Paths
-            </Button>
+            </Button> */}
           </div>
         </section>
         <section className="w-full max-w-5xl py-16">

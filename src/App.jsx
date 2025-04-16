@@ -10,6 +10,7 @@ import DashboardPage from "./pages/Dashboard/Dashboard"
 import DashboardLayout from "./pages/Layout"
 import LoginPage from "./pages/Login"
 import ProfilePage from "./pages/Dashboard/Profile"
+import DocumentUploadPage from "./pages/FileUpload"
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
         <Route path="profile" element={<ProfilePage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/upload" element={<DocumentUploadPage />} />
+
       
     </Routes>
   )

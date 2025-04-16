@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useState, useEffect } from "react"
 import {
   LayoutDashboard,
   BookOpen,
@@ -11,13 +11,18 @@ import {
   UserCircle,
   LogOut,
   BarChart3,
+  Menu,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useNavigate, useLocation } from "react-router-dom"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export function DashboardSidebar() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [isMobile, setIsMobile] = useState(false)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   const links = [
     // { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -28,8 +33,29 @@ export function DashboardSidebar() {
     { href: "/dashboard/skills", label: "My Skills", icon: BarChart3 },
   ]
 
-  return (
-    <div className="h-screen w-64 border-r flex flex-col">
+  // Handle window resize to detect mobile view
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768) // 768px is typical md breakpoint
+    }
+
+    checkIsMobile()
+    window.addEventListener('resize', checkIsMobile)
+    
+    return () => {
+      window.removeEventListener('resize', checkIsMobile)
+    }
+  }, [])
+
+  const handleNavigate = (path) => {
+    navigate(path)
+    if (isMobile) {
+      setIsSheetOpen(false)
+    }
+  }
+
+  const SidebarContent = () => (
+    <>
       <div className="p-4 border-b flex items-center gap-3">
         <span className="font-bold text-xl">CareerCanvas</span>
       </div>
@@ -37,7 +63,7 @@ export function DashboardSidebar() {
       <div className="flex flex-col flex-1 py-6 px-3 space-y-1">
         <button
           key="dashboard"
-          onClick={() => navigate("/dashboard")}
+          onClick={() => handleNavigate("/dashboard")}
           className={`
             flex items-center gap-3 px-3 py-2 rounded-md text-sm w-full text-left
             ${location.pathname === "/dashboard" ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-muted"}
@@ -52,7 +78,7 @@ export function DashboardSidebar() {
           return (
             <button
               key={link.href}
-              onClick={() => navigate(link.href)}
+              onClick={() => handleNavigate(link.href)}
               className={`
                 flex items-center gap-3 px-3 py-2 rounded-md text-sm w-full text-left
                 ${isActive ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-muted"}
@@ -76,10 +102,41 @@ export function DashboardSidebar() {
             <p className="text-xs text-muted-foreground truncate">john@example.com</p>
           </div>
         </div>
-        <Button onClick={() => navigate("/")} variant="ghost" className="w-full justify-start mt-2 text-muted-foreground">
+        <Button onClick={() => handleNavigate("/")} variant="ghost" className="w-full justify-start mt-2 text-muted-foreground">
           <LogOut className="mr-2 h-4 w-4" /> Log out
         </Button>
       </div>
+    </>
+  )
+
+  // Mobile floating menu button
+  if (isMobile) {
+    return (
+      <>
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <SheetTrigger asChild>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="fixed bottom-4 right-4 h-12 w-12 rounded-full shadow-lg z-50 bg-primary text-primary-foreground"
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-64">
+            <div className="h-full flex flex-col">
+              <SidebarContent />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </>
+    )
+  }
+
+  // Desktop sidebar
+  return (
+    <div className="h-screen w-64 border-r flex flex-col">
+      <SidebarContent />
     </div>
   )
-} 
+}
